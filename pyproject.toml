@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "walacor-python-sdk"
+version = "0.1.0"       
+description = "Python SDK for Walacor"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [
+  { name = "Garo Kechichian", email = "garo.keshish@gmail.com" },
+]
+keywords = ["walacor", "provenance", "lineage", "data-transformations"]
+requires-python = ">=3.8"
+classifiers=[
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.12"
+]
+
+dependencies = [
+  "requests>=2.20",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=6",
+  "pytest-cov",
+  "black",
+  "flake8",
+  "isort",
+]
+transformations = [
+  "pandas>=1.2",
+  "numpy>=1.21",
+  "scikit-learn>=1.0",
+]
+
+[project.scripts]
+# Uncomment and replace if CLI support is needed
+# walacor-cli = "walacor_sdk.cli:main"
+
+[project.urls]
+Homepage = "https://www.walacor.com"
+Documentation = "https://apidoc.walacor.com"
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+[tool.coverage.run]
+source = ["walacor_sdk"]
+branch = true
+
+[tool.flake8]
+max-line-length = 88
+exclude = [
+  ".git",
+  "__pycache__",
+  "dist",
+  "build",
+  "venv",
+  ".venv",
+]
+
+[tool.setuptools.packages]
+find = { where = ["walacor_sdk"] }
