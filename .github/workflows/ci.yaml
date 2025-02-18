@@ -26,7 +26,7 @@ jobs:
       
     - name: Lint
       run: |
-        flake8 src/ tests/
+        flake8 walacor_sdk/ tests/
 
     - name: Test
       run: |
