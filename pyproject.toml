@@ -3,11 +3,12 @@ build-backend = "setuptools.build_meta"
 requires = [
   "setuptools>=61",
   "wheel",
+  "setuptools-scm"
 ]
 
 [project]
 name = "walacor-python-sdk"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Python SDK for Walacor"
 readme = "README.md"
 keywords = [
@@ -84,3 +85,6 @@ skip_covered = true
 [tool.coverage.run]
 source = ["walacor_sdk"]
 branch = true
+
+[tool.setuptools_scm]
+write_to = "walacor_sdk/_version.py"  # ✅ This will store the version in a file
