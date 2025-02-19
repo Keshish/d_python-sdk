@@ -84,6 +84,9 @@ local_scheme = "no-local-version"
 
 
 [tool.semantic_release]
-main_branch = "test"
+main_branch = "main"
+major_branches = ["main", "test"]
+minor_branches = ["main", "test"]
+patch_branches = ["main", "test"]
 upload_to_pypi = true
 repository_url = "https://test.pypi.org/legacy/"
