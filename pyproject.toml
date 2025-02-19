@@ -8,7 +8,7 @@ requires = [
 
 [project]
 name = "walacor-python-sdk"
-dynamic = ["version"]
+version = "0.1.0"
 description = "Python SDK for Walacor"
 readme = "README.md"
 keywords = [
@@ -81,3 +81,9 @@ exclude = [
 [tool.setuptools_scm]
 version_scheme = "python-simplified-semver"
 local_scheme = "no-local-version"
+
+
+[tool.semantic_release]
+branch = "main"
+upload_to_pypi = true
+repository_url = "https://test.pypi.org/legacy/"
