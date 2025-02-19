@@ -83,10 +83,8 @@ version_scheme = "python-simplified-semver"
 local_scheme = "no-local-version"
 
 
-[tool.semantic_release]
-main_branch = "main"
-major_branches = ["main", "test"]
-minor_branches = ["main", "test"]
-patch_branches = ["main", "test"]
-upload_to_pypi = true
+[tool.semantic_release.branches."test"]
+match = "test"
+prerelease = true
+prerelease_token = "rc"
 repository_url = "https://test.pypi.org/legacy/"
