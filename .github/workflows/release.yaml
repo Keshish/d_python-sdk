@@ -25,6 +25,9 @@ jobs:
           pip install --upgrade pip
           pip install python-semantic-release
           pip install build
+      
+      - name: Build the package
+        run: python -m build
 
       - name: Run Semantic Release
         env:
