@@ -36,6 +36,7 @@ classifiers=[
 ]
 dependencies = [
   "requests>=2.20",
+  ""build"
 ]
 [project.optional-dependencies]
 dev = [
@@ -44,7 +45,6 @@ dev = [
   "isort",
   "pytest>=6",
   "pytest-cov",
-  "build"
 ]
 transformations = [
   "numpy>=1.21",
