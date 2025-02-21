@@ -82,6 +82,10 @@ exclude = [
 version_scheme = "python-simplified-semver"
 local_scheme = "no-local-version"
 
+[tool.semantic_release]
+tag_format = "{version}"
+
+
 [tool.semantic_release.branches."test"]
 match = "test"
 prerelease = true

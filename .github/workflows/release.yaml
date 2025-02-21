@@ -29,4 +29,4 @@ jobs:
           PYPI_USERNAME: "__token__"
           PYPI_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
 
-        run: semantic-release publish
+        run: semantic-release -vv publish
