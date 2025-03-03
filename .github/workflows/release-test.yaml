@@ -2,7 +2,7 @@ name: Release to PyPI
 
 on:
   push:
-    branches: [ "main", "feature/*" ]
+    branches: [ "main" ]
 
 jobs:
   release:
@@ -32,4 +32,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           PYPI_USERNAME: "__token__"
           PYPI_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-        run: semantic-release -vv publish
+        run: semantic-release -vv publish --debug
