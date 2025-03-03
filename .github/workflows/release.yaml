@@ -12,7 +12,6 @@ jobs:
     name: Build the source tarball and the wheel
     runs-on: ubuntu-latest
     environment: release
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -44,6 +43,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist
+          path: dist
 
       # If the tag includes "rc", assume it's a prerelease => push to Test PyPI:
       - name: Publish to Test PyPI
