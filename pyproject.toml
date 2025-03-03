@@ -81,6 +81,8 @@ exclude = [
 
 [tool.semantic_release]
 tag_format = "{version}"
+build_command = "python -m build"
+
 
 
 [tool.semantic_release.branches."test"]
