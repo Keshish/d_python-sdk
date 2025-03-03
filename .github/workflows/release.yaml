@@ -39,6 +39,8 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: [build] 
+    permissions:
+      id-token: write
     steps:
       - name: Download packages
         uses: actions/download-artifact@v4
@@ -47,22 +49,16 @@ jobs:
           path: dist
 
       # If the tag includes "rc", assume it's a prerelease => push to Test PyPI:
-      - name: Publish to Test PyPI
+      - name: Publish to Test PyPI (Trusted Publishing)
         if: contains(github.ref_name, 'rc')
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: "__token__"
-          password: ${{ secrets.TEST_PYPI_TOKEN }}
-          repository_url: "https://test.pypi.org/legacy/"
+          repository-url: "https://test.pypi.org/legacy/"
 
-      # Otherwise, push to real PyPI:
-      - name: Publish to PyPI
+      - name: Publish to PyPI (Trusted Publishing)
         if: "! contains(github.ref_name, 'rc')"
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: "__token__"
-          password: ${{ secrets.PYPI_TOKEN }}
-          # The default repository is https://upload.pypi.org/legacy/
+
 
   release:
     runs-on: ubuntu-latest
