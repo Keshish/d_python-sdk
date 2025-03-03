@@ -83,14 +83,18 @@ exclude = [
 tag_format = "{version}"
 build_command = "python -m build"
 
-
-
 [tool.semantic_release.branches."test"]
 match = "test"
+prerelease = true
 prerelease_token = "rc"
 repository_url = "https://test.pypi.org/legacy/"
+starting_version = "0.1.0"
 
 [tool.semantic_release.branches."main"]
 match = "main"
 prerelease = false
 repository_url = "https://upload.pypi.org/legacy/"
+
+[tool.setuptools_scm]
+version_scheme = "python-simplified-semver"
+local_scheme = "no-local-version"

@@ -24,10 +24,13 @@ jobs:
           pip install --upgrade pip
           pip install build python-semantic-release
 
+      - name: Build the package
+        run: python -m build
+
       - name: Run Semantic Release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           PYPI_USERNAME: "__token__"
           PYPI_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
-          #SEMANTIC_RELEASE_LEVEL: "minor"  # or "patch", or "major"
+
         run: semantic-release -vv publish
