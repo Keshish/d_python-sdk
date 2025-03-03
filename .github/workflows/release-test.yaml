@@ -3,15 +3,18 @@ name: Release to Test PyPI
 on:
   push:
     branches: [ "test" ]
-  
+
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed for creating GitHub Releases & tags
 
     steps:
-      - name: Check out repo
+      - name: Checkout
         uses: actions/checkout@v3
         with:
+          # IMPORTANT: fetch-depth = 0 so that semantic-release can read all tags
           fetch-depth: 0
 
       - name: Set up Python
@@ -21,16 +24,15 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install build python-semantic-release
 
-      - name: Build the package
-        run: python -m build
-
-      - name: Run Semantic Release
+      - name: Run Semantic Release (Publish)
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          # Must point GH_TOKEN to a valid token for creating GitHub releases/tags
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # or GH_TOKEN: ${{ secrets.GH_TOKEN }} if you stored a PAT in GH_TOKEN
           PYPI_USERNAME: "__token__"
           PYPI_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
-
-        run: semantic-release -vv publish
+        run: |
+          semantic-release publish -v
