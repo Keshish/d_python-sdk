@@ -88,3 +88,9 @@ match = "test"
 prerelease_token = "rc"
 repository_url = "https://test.pypi.org/legacy/"
 starting_version = "0.1.0"
+
+
+[tool.semantic_release.branches."main"]
+match = "main"
+prerelease = false
+repository_url = "https://upload.pypi.org/legacy/"
