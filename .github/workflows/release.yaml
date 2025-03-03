@@ -1,11 +1,12 @@
-name: Manual Tag Release
+name: Publish packages to PyPI
 
 on:
   push:
     tags:
       - "[0-9]+\\.[0-9]+\\.[0-9]+"
-      - "[0-9]+\\.[0-9]+\\.[0-9]+rc[0-9]+"
-      - "[0-9]+\\.[0-9]+\\.[0-9]+-rc\\.[0-9]+"
+      - "[0-9]+\\.[0-9]+\\.[0-9]+.post[0-9]+"
+      - "[0-9]+\\.[0-9]+\\.[0-9]+[a-b][0-9]+"  # e.g., 1.0.0a1, 1.0.0b2
+      - "[0-9]+\\.[0-9]+\\.[0-9]+rc[0-9]+"  # e.g., 1.0.0rc1
 
 jobs:
   build:
@@ -13,71 +14,65 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.x"
 
-      - name: Install build tool
-        run: |
-          pip install --upgrade pip
-          pip install build
+      - name: Install dependencies
+        run: pip install build
 
-      - name: Build the packages
+      - name: Create packages
         run: python -m build
+
+      - name: Verify build output
+        run: ls -l dist/ || exit 1  # Fail if no files are built
 
       - name: Archive packages
         uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: python-dist
           path: dist
 
   publish:
+    name: Publish build artifacts to the PyPI
+    needs: build
     runs-on: ubuntu-latest
-    needs: [build] 
+    environment: release
+    permissions:
+      id-token: write  # ✅ Needed for Trusted Publishing
     steps:
-      - name: Download packages
+      - name: Retrieve packages
         uses: actions/download-artifact@v4
         with:
-          name: dist
-          path: dist
+          name: python-dist
+          path: dist  # ✅ Ensure packages go into 'dist/'
 
-      # If the tag includes "rc", assume it's a prerelease => push to Test PyPI:
-      - name: Publish to Test PyPI
-        if: contains(github.ref_name, 'rc')
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: "__token__"
-          password: ${{ secrets.TEST_PYPI_TOKEN }}
-          repository_url: "https://test.pypi.org/legacy/"
+      - name: Verify downloaded packages
+        run: ls -l dist/ || exit 1  # ✅ Debug if 'dist/' is empty
 
-      # Otherwise, push to real PyPI:
-      - name: Publish to PyPI
-        if: "! contains(github.ref_name, 'rc')"
+      - name: Upload packages to PyPI (Trusted Publishing)
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: "__token__"
-          password: ${{ secrets.PYPI_TOKEN }}
-          # The default repository is https://upload.pypi.org/legacy/
+        # ✅ No 'user' or 'password' needed since OIDC is used
 
   release:
+    name: Create a GitHub release
+    needs: build
     runs-on: ubuntu-latest
-    needs: [build]
     permissions:
-      contents: write   # needed to create releases
+      contents: write
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      # Create or update a GitHub Release with the same name as your tag:
-      - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
+      - id: changelog
+        uses: agronholm/release-notes@v1
+        with:
+          path: docs/versionhistory.rst
+
+      - uses: ncipollo/release-action@v1
         with:
           tag: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
-          # if you want a pre-release on GitHub for RC tags:
-          prerelease: ${{ contains(github.ref_name, 'rc') }}
-          # body: "Your custom release notes here"
+          body: ${{ steps.changelog.outputs.changelog }}
