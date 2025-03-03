@@ -51,10 +51,8 @@ jobs:
       - name: Publish to Test PyPI (Trusted Publishing)
         if: contains(github.ref_name, 'rc')
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: "https://test.pypi.org/legacy/"
 
-      # - name: Publish to PyPI (Trusted Publishing)
+        # - name: Publish to PyPI (Trusted Publishing)
       #   if: "! contains(github.ref_name, 'rc')"
       #   uses: pypa/gh-action-pypi-publish@release/v1
 
