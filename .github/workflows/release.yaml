@@ -48,16 +48,15 @@ jobs:
           name: dist
           path: dist
 
-      # If the tag includes "rc", assume it's a prerelease => push to Test PyPI:
       - name: Publish to Test PyPI (Trusted Publishing)
         if: contains(github.ref_name, 'rc')
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: "https://test.pypi.org/legacy/"
 
-      - name: Publish to PyPI (Trusted Publishing)
-        if: "! contains(github.ref_name, 'rc')"
-        uses: pypa/gh-action-pypi-publish@release/v1
+      # - name: Publish to PyPI (Trusted Publishing)
+      #   if: "! contains(github.ref_name, 'rc')"
+      #   uses: pypa/gh-action-pypi-publish@release/v1
 
 
   release:
