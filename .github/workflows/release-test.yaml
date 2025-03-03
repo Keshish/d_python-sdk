@@ -32,5 +32,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           PYPI_USERNAME: "__token__"
           PYPI_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
+          SEMANTIC_RELEASE_LEVEL: "minor"  # or "patch", or "major"
+
 
         run: semantic-release -vv publish
