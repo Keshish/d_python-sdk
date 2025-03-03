@@ -9,7 +9,9 @@ on:
 
 jobs:
   build:
+    name: Build the source tarball and the wheel
     runs-on: ubuntu-latest
+    environment: release
 
     steps:
       - name: Check out repository
