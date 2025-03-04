@@ -35,10 +35,7 @@ jobs:
         with: python-dist
         parth: dist  
 
-
-
   publish:
-
     name: Publish build artifacts to the PyPI
     needs: build
     runs-on: ubuntu-latest
