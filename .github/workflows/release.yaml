@@ -64,6 +64,8 @@ jobs:
     name: Create a GitHub Release
     needs: publish
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   
     steps:
       - name: Create Release
         uses: actions/create-release@v1
