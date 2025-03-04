@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -36,10 +36,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with: 
           name: python-dist
-          path: dist 
+          path: dist
 
   publish:
-    name: Publish build artifacts to PyPI
+    name: Publish build artifacts
     needs: build
     runs-on: ubuntu-latest
     environment: release
@@ -55,17 +55,26 @@ jobs:
       - name: Verify downloaded packages
         run: ls -l dist/ || exit 1
 
+      # Step for publishing to Production PyPI if the tag does NOT contain 'rc'
+      - name: Publish to PyPI (OIDC)
+        if: "! contains(github.ref_name, 'rc')"
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: "https://upload.pypi.org/legacy/"
+
+      # Step for publishing to Test PyPI if the tag DOES contain 'rc'
       - name: Publish to Test PyPI (OIDC)
+        if: contains(github.ref_name, 'rc')
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: "https://test.pypi.org/legacy/"
-  
+
   create_release:
     name: Create a GitHub Release
     needs: publish
     runs-on: ubuntu-latest
     permissions:
-      contents: write   
+      contents: write
     steps:
       - name: Create Release
         uses: actions/create-release@v1
@@ -74,6 +83,6 @@ jobs:
           release_name: "Release ${{ github.ref_name }}"
           body: "Release notes go here."
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(github.ref_name, 'rc') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
