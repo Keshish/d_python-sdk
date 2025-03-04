@@ -2,39 +2,60 @@ name: Minimal OIDC Release
 
 on:
   push:
-    # Trigger only when pushing tags like v1.2.3
-    # Adjust the pattern if you want other forms (e.g. rc, post, etc.)
     tags:
-      - "v[0-9]+\\.[0-9]+\\.[0-9]+"
+      - "[0-9]+\\.[0-9]+\\.[0-9]+"
+      - "[0-9]+\\.[0-9]+\\.[0-9]+.post[0-9]+"
+      - "[0-9]+\\.[0-9]+\\.[0-9]+[a-b][0-9]+"  
+      - "[0-9]+\\.[0-9]+\\.[0-9]+rc[0-9]+"  
 
 jobs:
-  publish:
+  build:
+    name: Build the source tarball and the wheel
     runs-on: ubuntu-latest
+    environment: release #?
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
 
-    # Required for PyPI Trusted Publishing:
+      - name: Install dependencies
+        run: pip install build
+
+      - name: Create packages
+        run: pythin -m build
+
+      - name: Verify build output
+        run: ls -l dist/ || exit 1
+
+      - name: Archive packages
+        uses: actions/upload-artifact@v4
+        with: python-dist
+        parth: dist  
+
+
+
+  publish:
+
+    name: Publish build artifacts to the PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment: release
     permissions:
       id-token: write
-
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Retrieve packages
+        uses: actions/download-artifact@v4
         with:
-          python-version: "3.11"
-
-      - name: Install build tool
-        run: |
-          pip install --upgrade pip
-          pip install build
-
-      - name: Build package
-        run: python -m build
-        # This creates dist/your_project-<version>.tar.gz and .whl
+          name: python-dist
+          path: dist
+      
+      - name: Verify downloaded packages
+        run: ls -l dist/ || exit 1
 
       - name: Publish to Test PyPI (OIDC)
         uses: pypa/gh-action-pypi-publish@release/v1
-        # Notice: no user/password => uses OIDC
         with:
           repository-url: "https://test.pypi.org/legacy/"
