@@ -32,7 +32,8 @@ jobs:
 
       - name: Archive packages
         uses: actions/upload-artifact@v4
-        with: python-dist
+        with: 
+        name: python-dist
         parth: dist  
 
   publish:
