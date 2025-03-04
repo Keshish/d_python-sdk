@@ -60,22 +60,18 @@ jobs:
         with:
           repository-url: "https://test.pypi.org/legacy/"
   
-  release:
-    name: Create a GitHub release
-    needs: build
+  create_release:
+    name: Create a GitHub Release
+    needs: publish
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - uses: actions/checkout@v4
-
-      - id: changelog
-        uses: agronholm/release-notes@v1
+      - name: Create Release
+        uses: actions/create-release@v1
         with:
-          path: docs/versionhistory.rst
-
-      - uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
-          body: ${{ steps.changelog.outputs.changelog }}
+          tag_name: ${{ github.ref_name }}
+          release_name: "Release ${{ github.ref_name }}"
+          body: "Release notes go here."
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
