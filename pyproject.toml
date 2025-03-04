@@ -2,8 +2,8 @@
 build-backend = "setuptools.build_meta"
 requires = [
   "setuptools>=61",
+  "setuptools-scm",
   "wheel",
-  "setuptools-scm"
 ]
 
 [project]
@@ -27,9 +27,6 @@ classifiers=[
   "Intended Audience :: Developers",
   "License :: OSI Approved :: Apache Software License",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -37,6 +34,8 @@ classifiers=[
 dependencies = [
   "requests>=2.20",
 ]
+
+
 [project.optional-dependencies]
 dev = [
   "black",
@@ -58,6 +57,10 @@ Homepage = "https://www.walacor.com"
 [tool.setuptools.packages]
 find = { where = ["walacor_sdk"] }
 
+[tool.setuptools_scm]
+version_scheme = "python-simplified-semver"
+local_scheme = "no-local-version"
+
 [tool.black]
 line-length = 88
 target-version = ["py312"]
@@ -78,6 +81,17 @@ exclude = [
   ".venv",
 ]
 
-[tool.setuptools_scm]
-version_scheme = "python-simplified-semver"
-local_scheme = "no-local-version"
+[tool.semantic_release]
+tag_format = "{version}"
+build_command = "python -m build"
+
+[tool.semantic_release.branches."test"]
+match = "test"
+prerelease = true
+prerelease_token = "rc"
+repository_url = "https://test.pypi.org/legacy/"
+
+[tool.semantic_release.branches."main"]
+match = "main"
+prerelease = false
+repository_url = "https://upload.pypi.org/legacy/"

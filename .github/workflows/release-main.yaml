@@ -1,0 +1,35 @@
+name: Release to PyPI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install build python-semantic-release
+
+      - name: Build
+        run: python -m build
+
+      - name: Semantic Release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          PYPI_USERNAME: "__token__"
+          PYPI_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: semantic-release publish
