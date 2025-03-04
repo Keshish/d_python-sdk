@@ -3,10 +3,10 @@ name: Minimal OIDC Release
 on:
   push:
     tags:
-      - "[0-9]+\\.[0-9]+\\.[0-9]+"       # Stable versions
-      - "[0-9]+\\.[0-9]+\\.[0-9]+.post[0-9]+"  # Post releases
-      - "[0-9]+\\.[0-9]+\\.[0-9]+[a-z]+[0-9]+"  # Alpha, beta, rc versions
-      - "[0-9]+\\.[0-9]+\\.[0-9]+rc[0-9]+"  # RC versions (already covered above)
+      - "[0-9]+\\.[0-9]+\\.[0-9]+"      
+      - "[0-9]+\\.[0-9]+\\.[0-9]+.post[0-9]+"  
+      - "[0-9]+\\.[0-9]+\\.[0-9]+[a-z]+[0-9]+" 
+      - "[0-9]+\\.[0-9]+\\.[0-9]+rc[0-9]+"
 
 jobs:
   build:
@@ -59,3 +59,23 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: "https://test.pypi.org/legacy/"
+  
+  release:
+    name: Create a GitHub release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: changelog
+        uses: agronholm/release-notes@v1
+        with:
+          path: docs/versionhistory.rst
+
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body: ${{ steps.changelog.outputs.changelog }}
