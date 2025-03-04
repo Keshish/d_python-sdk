@@ -55,14 +55,12 @@ jobs:
       - name: Verify downloaded packages
         run: ls -l dist/ || exit 1
 
-      # Step for publishing to Production PyPI if the tag does NOT contain 'rc'
       - name: Publish to PyPI (OIDC)
         if: "! contains(github.ref_name, 'rc')"
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: "https://upload.pypi.org/legacy/"
 
-      # Step for publishing to Test PyPI if the tag DOES contain 'rc'
       - name: Publish to Test PyPI (OIDC)
         if: contains(github.ref_name, 'rc')
         uses: pypa/gh-action-pypi-publish@release/v1
