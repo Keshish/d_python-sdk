@@ -55,7 +55,7 @@ Homepage = "https://www.walacor.com"
 [project.scripts]
 
 [tool.setuptools.packages]
-find = { where = ["walacor_sdk"] }
+find = { where = ["walacor_python_sdk"] }
 
 [tool.setuptools_scm]
 version_scheme = "python-simplified-semver"
