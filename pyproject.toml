@@ -54,9 +54,6 @@ Documentation = "https://apidoc.walacor.com"
 Homepage = "https://www.walacor.com"
 [project.scripts]
 
-[tool.setuptools.packages]
-find = { where = ["walacor_python_sdk"] }
-
 [tool.setuptools_scm]
 version_scheme = "python-simplified-semver"
 local_scheme = "no-local-version"
