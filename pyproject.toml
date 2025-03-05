@@ -7,7 +7,7 @@ requires = [
 ]
 
 [project]
-name = "walacor-python-sdk"
+name = "d_walacor-python-sdk"
 dynamic = ["version"]
 description = "Python SDK for Walacor"
 readme = "README.md"
@@ -53,9 +53,6 @@ transformations = [
 Documentation = "https://apidoc.walacor.com"
 Homepage = "https://www.walacor.com"
 [project.scripts]
-
-[tool.setuptools.packages]
-find = { where = ["walacor_sdk"] }
 
 [tool.setuptools_scm]
 version_scheme = "python-simplified-semver"
