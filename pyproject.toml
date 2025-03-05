@@ -7,8 +7,7 @@ requires = [
 ]
 
 [project]
-name = "d_walacor-python-sdk"
-dynamic = ["version"]
+name = "d-walacor-python-sdk"
 description = "Python SDK for Walacor"
 readme = "README.md"
 keywords = [
@@ -31,11 +30,12 @@ classifiers=[
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
 ]
+dynamic = [
+  "version",
+]
 dependencies = [
   "requests>=2.20",
 ]
-
-
 [project.optional-dependencies]
 dev = [
   "black",
