@@ -16,12 +16,12 @@ keywords = [
   "provenance",
   "walacor",
 ]
-license = {text = "Apache-2.0"}
+license = { text = "Apache-2.0" }
 authors = [
   { name = "Garo Kechichian", email = "garo.keshish@gmail.com" },
 ]
 requires-python = ">=3.11"
-classifiers=[
+classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: Apache Software License",
@@ -36,23 +36,20 @@ dynamic = [
 dependencies = [
   "requests>=2.20",
 ]
-[project.optional-dependencies]
-dev = [
+optional-dependencies.dev = [
   "black",
   "flake8",
   "isort",
   "pytest>=6",
   "pytest-cov",
 ]
-transformations = [
+optional-dependencies.transformations = [
   "numpy>=1.21",
   "pandas>=1.2",
   "scikit-learn>=1",
 ]
-[project.urls]
-Documentation = "https://apidoc.walacor.com"
-Homepage = "https://www.walacor.com"
-[project.scripts]
+urls.Documentation = "https://apidoc.walacor.com"
+urls.Homepage = "https://www.walacor.com"
 
 [tool.setuptools_scm]
 version_scheme = "python-simplified-semver"
@@ -60,7 +57,7 @@ local_scheme = "no-local-version"
 
 [tool.black]
 line-length = 88
-target-version = ["py312"]
+target-version = [ "py312" ]
 
 [tool.isort]
 profile = "black"

@@ -1,13 +1,14 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
+
 from walacor_python_sdk.w_client import W_Client
 
-
-
-BASE_URL= "http://fakeapi.com"
-USERNAME= "testuser"
-PASSWORD= "testpass"
+BASE_URL = "http://fakeapi.com"
+USERNAME = "testuser"
+PASSWORD = "testpass"
 TEST_ENDPOINT = "test-endpoint"
+
 
 def test_client_authenticate_success():
     """Test that W_Client successfully authenticates and stores token"""
@@ -39,9 +40,13 @@ def test_client_authticate_failure():
         with pytest.raises(Exception, match="Authentication failed"):
             client.authenticate()
 
+
 def test_client_request_with_authentication():
     """Test that W_Client adds the authentication token in headers"""
-    with patch("requests.Session.post") as mock_post, patch("requests.Session.request") as mock_request:
+    with (
+        patch("requests.Session.post") as mock_post,
+        patch("requests.Session.request") as mock_request,
+    ):
         # Mock authentication
         mock_auth_response = MagicMock()
         mock_auth_response.status_code = 200
@@ -54,7 +59,7 @@ def test_client_request_with_authentication():
         mock_request.return_value = mock_response
 
         client = W_Client(BASE_URL, USERNAME, PASSWORD)
-        client.authenticate()  
+        client.authenticate()
 
         response = client.request("GET", TEST_ENDPOINT)
 
@@ -62,19 +67,23 @@ def test_client_request_with_authentication():
         mock_request.assert_called_once_with(
             "GET",
             f"{BASE_URL}/test-endpoint",
-            headers={"Authorization": "Bearer fake_token"} 
+            headers={"Authorization": "Bearer fake_token"},
         )
 
-def test_client_request_with_authentication():
+
+def test_client_request_reauth_on_401():
     """Test that W_Client re-authenticates and retries on 401 Unauthorized"""
-    with patch("requests.Session.post") as mock_post, patch("requests.Session.request") as mock_request:
+    with (
+        patch("requests.Session.post") as mock_post,
+        patch("requests.Session.request") as mock_request,
+    ):
         # Mock authentication
         mock_auth_response = MagicMock()
         mock_auth_response.status_code = 200
         mock_auth_response.json.return_value = {"token": "fake_token"}
         mock_post.return_value = mock_auth_response
 
-        # Mock request 
+        # Mock request
         mock_unauth_response = MagicMock()
         mock_unauth_response.status_code = 401
 
