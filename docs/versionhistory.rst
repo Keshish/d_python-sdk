@@ -2,7 +2,7 @@
 CHANGELOG
 ==========
 
-v1.0.0
+9999.0.3rc1
 -------
 
-- Initial release notes here.
+
