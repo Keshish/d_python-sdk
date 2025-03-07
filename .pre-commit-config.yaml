@@ -13,11 +13,10 @@ repos:
       - id: isort
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.9
+    rev: v0.9.10
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix, --show-fixes]
-      - id: ruff-format
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.15.0
@@ -33,7 +32,6 @@ repos:
           - typing-extensions>=4.5
           - rich
         exclude: '^tests/.*'
-
 
   - repo: https://github.com/PyCQA/flake8
     rev: 7.1.2

@@ -12,9 +12,7 @@ class BaseService(ABC):
 
     def _request(self, method: str, endpoint: str, **kwargs: Any) -> Dict[str, Any]:
         try:
-            response: requests.Response = self.client.request(
-                method, endpoint, **kwargs
-            )
+            response: requests.Response = self.client.request(method, endpoint, **kwargs)
             response.raise_for_status()
             json_response: Dict[str, Any] = response.json()
             return json_response

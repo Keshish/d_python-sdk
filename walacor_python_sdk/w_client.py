@@ -9,30 +9,35 @@ class W_Client:
         self.username: str = username
         self.password: str = password
         self.token: Optional[str] = None
-        self.session: requests.Session = requests.Session()
 
     def authenticate(self) -> None:
-        """Authenticate and store token"""
-        response: requests.Response = self.session.post(
-            f"{self.base_url}/auth",
-            json={"username": self.username, "password": self.password},
+        """Authenticate and store token."""
+        response = requests.post(
+            f"{self.base_url}/auth/login",
+            json={"userName": self.username, "password": self.password},
+            headers={"Content-Type": "application/json"},
         )
         if response.status_code == 200:
-            self.token = response.json().get("token")
+            self.token = response.json().get("api_token")
+            print(self.token)  # TODO remove
         else:
             raise Exception("Authentication failed")
 
     def request(self, method: str, endpoint: str, **kwargs: Any) -> requests.Response:
-        """Automatically adds authentication token if available"""
-        if self.token:
-            kwargs.setdefault("headers", {})["Authorization"] = f"Bearer {self.token}"
+        """Make an API request, handling authentication manually."""
+        if not self.token:
+            self.authenticate()
 
-        response: requests.Response = self.session.request(
-            method, f"{self.base_url}/{endpoint}", **kwargs
-        )
+        headers = kwargs.pop("headers", {})
+        headers["Authorization"] = f"Bearer {self.token}"
+        headers["Content-Type"] = "application/json"
+
+        response = requests.request(method, f"{self.base_url}/{endpoint}", headers=headers, **kwargs)
 
         if response.status_code == 401:
+            # Re-authenticate if the token has expired
             self.authenticate()
-            return self.request(method, endpoint, **kwargs)
+            headers["Authorization"] = f"Bearer {self.token}"
+            response = requests.request(method, f"{self.base_url}/{endpoint}", headers=headers, **kwargs)
 
         return response
