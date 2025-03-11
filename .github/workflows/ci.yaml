@@ -43,4 +43,4 @@ jobs:
         run: pip install tox
 
       - name: Run Tox
-        run: tox  # This will execute tests for py311, py312
+        run: tox
