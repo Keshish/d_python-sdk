@@ -2,36 +2,47 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - 'temp-*'
+      - 'feature/*'
+      - 'bugfix/*'
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
+      - 'temp-*'
+      - 'feature/*'
+      - 'bugfix/*'
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        python-version: [ '3.11', '3.12' ]
     steps:
-    - name: Check out repo
-      uses: actions/checkout@v3
+      - name: Check out repo
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.9"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install Dependencies
-      run: |
-        pip install --upgrade pip wheel setuptools
-        pip install -r requirements-dev.txt
+      - name: Upgrade pip/setuptools/wheel
+        run: |
+          pip install --upgrade pip setuptools wheel
 
-    - name: Lint
-      run: |
-        flake8 walacor_sdk/ tests/
+      - name: Install dev extras
+        run: |
+          pip install -r requirements-dev.txt
 
-    - name: Test
-      run: |
-        pytest --maxfail=9999 --disable-warnings --verbose
+      - name: Run Pre-commit
+        run: |
+          pip install pre-commit
+          pre-commit run --all-files
 
-    - name: Build dist
-      run: |
-        python -m build
+      - name: Run Tox
+        run: |
+          pip install tox
+          tox
