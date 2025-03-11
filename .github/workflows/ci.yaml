@@ -37,6 +37,11 @@ jobs:
         run: |
           pip install .[dev]
 
+      - name: Run Pre-commit
+        run: |
+          pip install pre-commit
+          pre-commit run --all-files
+
       - name: Install Tox
         run: pip install tox
 
