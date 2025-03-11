@@ -11,7 +11,9 @@ TEST_ENDPOINT = "test-endpoint"
 
 def test_sdk_facade_auth_service_lazy_loading():
     """Test that SDKFacade properly initializes AuthService lazily"""
-    with patch("walacor_python_sdk.authentication.auth_service.AuthService", autospec=True) as mock_auth_service:
+    with patch(
+        "walacor_python_sdk.authentication.auth_service.AuthService", autospec=True
+    ) as mock_auth_service:
         client = W_Client(BASE_URL, USERNAME, PASSWORD)
         facade = SDKFacade(client=client, auth_service_cls=mock_auth_service)
 
