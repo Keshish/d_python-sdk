@@ -27,7 +27,9 @@ def test_client_authenticate_success():
             headers={"Content-Type": "application/json"},
         )
 
-        assert client.token == "fake_token", f"Expected 'fake_token' but got {client.token}"
+        assert (
+            client.token == "fake_token"
+        ), f"Expected 'fake_token' but got {client.token}"
 
 
 def test_client_authenticate_failure():
