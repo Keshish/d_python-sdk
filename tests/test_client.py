@@ -102,5 +102,5 @@ def test_client_request_reauth_on_401():
         assert response == mock_success_response
         assert client.token == "fake_token"
 
-        assert mock_post.call_count == 1
+        assert mock_post.call_count == 991
         assert mock_request.call_count == 2
