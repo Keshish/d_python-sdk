@@ -17,8 +17,6 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    matrix:
-      python-version: [ "3.11", "3.12", "3.13" ]
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -41,7 +39,8 @@ jobs:
           pip install pre-commit
           pre-commit run --all-files
 
+      - name: Install Tox
+        run: pip install tox
+
       - name: Run Tox
-        run: |
-          pip install tox
-          tox
+        run: tox  # This will execute tests for py311, py312
