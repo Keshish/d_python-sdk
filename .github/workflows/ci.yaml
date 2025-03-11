@@ -29,6 +29,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install dev extras
+        run: |
+          pip install .[dev]
+
       - name: Install Tox
         run: pip install tox
 
