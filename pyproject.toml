@@ -1,27 +1,27 @@
-  [build-system]
-  build-backend = "setuptools.build_meta"
-  requires = [
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
   "setuptools>=61",
   "setuptools-scm",
   "wheel",
 ]
 
-  [project]
-  name = "d-walacor-python-sdk"
-  description = "Python SDK for Walacor"
-  readme = "README.md"
-  keywords = [
+[project]
+name = "d-walacor-python-sdk"
+description = "Python SDK for Walacor"
+readme = "README.md"
+keywords = [
   "data-transformations",
   "lineage",
   "provenance",
   "walacor",
 ]
-  license = { text = "Apache-2.0" }
-  authors = [
-    { name = "Garo Kechichian", email = "garo.keshish@gmail.com" },
-  ]
-  requires-python = ">=3.11"
-  classifiers = [
+license = { text = "Apache-2.0" }
+authors = [
+  { name = "Garo Kechichian", email = "garo.keshish@gmail.com" },
+]
+requires-python = ">=3.11"
+classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: Apache Software License",
@@ -30,42 +30,62 @@
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
 ]
-  dynamic = [
+dynamic = [
   "version",
 ]
-  dependencies = [
+dependencies = [
   "requests>=2.20",
 ]
-  optional-dependencies.dev = [
+optional-dependencies.dev = [
   "black",
   "flake8",
   "isort",
   "pytest>=6",
   "pytest-cov",
 ]
-  urls.Documentation = "https://apidoc.walacor.com"
-  urls.Homepage = "https://www.walacor.com"
+optional-dependencies.transformations = [
+  "numpy>=1.21",
+  "pandas>=1.2",
+  "scikit-learn>=1",
+]
+urls.Documentation = "https://apidoc.walacor.com"
+urls.Homepage = "https://www.walacor.com"
 
-  [tool.setuptools_scm]
-  version_scheme = "python-simplified-semver"
-  local_scheme = "no-local-version"
+[tool.setuptools_scm]
+version_scheme = "python-simplified-semver"
+local_scheme = "no-local-version"
 
-  [tool.black]
-  line-length = 120
-  target-version = [ "py312" ]
+[tool.black]
+line-length = 120
+target-version = [ "py312" ]
 
-  [tool.isort]
-  profile = "black"
-  multi_line_output = 3
-  include_trailing_comma = true
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
 
-  [tool.flake8]
-  max-line-length = 120
-  exclude = [
-    ".git",
-    "__pycache__",
-    "dist",
-    "build",
-    "venv",
-    ".venv",
-  ]
+[tool.flake8]
+max-line-length = 120
+exclude = [
+  ".git",
+  "__pycache__",
+  "dist",
+  "build",
+  "venv",
+  ".venv",
+]
+
+[tool.semantic_release]
+tag_format = "{version}"
+build_command = "python -m build"
+
+[tool.semantic_release.branches."test"]
+match = "test"
+prerelease = true
+prerelease_token = "rc"
+repository_url = "https://test.pypi.org/legacy/"
+
+[tool.semantic_release.branches."main"]
+match = "main"
+prerelease = false
+repository_url = "https://upload.pypi.org/legacy/"

@@ -3,9 +3,9 @@
   on:
     push:
       tags:
-        - "[0-9]+\\.[0-9]+\\.[0-9]+"      
-        - "[0-9]+\\.[0-9]+\\.[0-9]+.post[0-9]+"  
-        - "[0-9]+\\.[0-9]+\\.[0-9]+[a-z]+[0-9]+" 
+        - "[0-9]+\\.[0-9]+\\.[0-9]+"
+        - "[0-9]+\\.[0-9]+\\.[0-9]+.post[0-9]+"
+        - "[0-9]+\\.[0-9]+\\.[0-9]+[a-z]+[0-9]+"
         - "[0-9]+\\.[0-9]+\\.[0-9]+rc[0-9]+"
 
   jobs:
@@ -34,7 +34,7 @@
 
         - name: Archive packages
           uses: actions/upload-artifact@v4
-          with: 
+          with:
             name: python-dist
             path: dist
 
@@ -51,7 +51,7 @@
           with:
             name: python-dist
             path: dist
-        
+
         - name: Verify downloaded packages
           run: ls -l dist/ || exit 1
 
@@ -68,7 +68,7 @@
           with:
             repository-url: "https://test.pypi.org/legacy/"
             verbose: true
-            
+
     create_release:
       name: Create a GitHub Release
       needs: publish
