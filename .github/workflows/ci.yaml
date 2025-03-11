@@ -33,8 +33,9 @@ jobs:
       #   run: |
       #     pip install --upgrade pip setuptools wheel
 
-      # - name: Install dev extras
-      #   run: |
-      #     pip install .[dev]
+      - name: Install dev extras
+        run: |
+          pip install .[dev]
+
       - name: Run Tox
         run: tox
