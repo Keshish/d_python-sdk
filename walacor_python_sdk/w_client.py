@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 import requests
 
@@ -8,7 +8,7 @@ class W_Client:
         self.base_url: str = base_url
         self.username: str = username
         self.password: str = password
-        self.token: Optional[str] = None
+        self.token: str | None = None
 
     def authenticate(self) -> None:
         """Authenticate and store token."""
@@ -19,7 +19,6 @@ class W_Client:
         )
         if response.status_code == 200:
             self.token = response.json().get("api_token")
-            print(self.token)  # TODO remove
         else:
             raise Exception("Authentication failed")
 
@@ -32,12 +31,16 @@ class W_Client:
         headers["Authorization"] = f"Bearer {self.token}"
         headers["Content-Type"] = "application/json"
 
-        response = requests.request(method, f"{self.base_url}/{endpoint}", headers=headers, **kwargs)
+        response = requests.request(
+            method, f"{self.base_url}/{endpoint}", headers=headers, **kwargs
+        )
 
         if response.status_code == 401:
             # Re-authenticate if the token has expired
             self.authenticate()
             headers["Authorization"] = f"Bearer {self.token}"
-            response = requests.request(method, f"{self.base_url}/{endpoint}", headers=headers, **kwargs)
+            response = requests.request(
+                method, f"{self.base_url}/{endpoint}", headers=headers, **kwargs
+            )
 
         return response
