@@ -17,9 +17,6 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [ '3.11', '3.12' ]
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -27,7 +24,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.12"
 
       - name: Upgrade pip/setuptools/wheel
         run: |
