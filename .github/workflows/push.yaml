@@ -3,7 +3,7 @@ name: Extract Release Notes Only
 on:
   push:
     tags:
-      - 'v*.*.*'  
+      - 'v*.*.*'
 
 jobs:
   extract_notes_job:
