@@ -1,14 +1,16 @@
 name: Build & Release
+
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'v*.*.*'  # For example, v1.0.0 or v0.9.2
 
 jobs:
   build_and_release:
     permissions:
-      contents: write
+      contents: write  # Needed for creating releases
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out
         uses: actions/checkout@v3
@@ -16,27 +18,38 @@ jobs:
       - name: Build (example)
         run: echo "Do your build or packaging here"
 
-      # 1) Parse the changelog to extract only the new version’s notes
       - name: Extract release notes
         id: extract_notes
         run: |
-          VERSION="${GITHUB_REF_NAME}"  # e.g. "v0.1.1"
-          # Let's assume your version headings are formatted like "## v0.1.1"
-          # Adjust sed patterns to match your real headings:
-          sed -n "/^## $VERSION$/,/^## v[0-9]*\.[0-9]*\.[0-9]*/p" CHANGELOG.md \
-            | sed '1d' \
-            | sed '$d' \
-            > extracted_notes.txt
+          # Example: if the tag is 'v1.2.3', VERSION will be 'v1.2.3'
+          VERSION="${GITHUB_REF_NAME}"
 
-          # Optionally cat it for debugging
+          # 1) Capture everything from the heading "## <tag>"
+          #    until the next heading "## vX.Y.Z"
+          #    We store it in 'extracted_notes.txt'
+          sed -n "/^## $VERSION$/,/^## v[0-9]*\.[0-9]*\.[0-9]*/p" CHANGELOG.md > extracted_notes.txt
+
+          # 2) Remove the *first* line in that range (the heading line itself)
+          sed -i '1d' extracted_notes.txt
+
+          # 3) If there was a subsequent heading (## vX.Y.Z), remove that final heading line too
+          #    This ensures we don't carry the next heading as part of these notes.
+          sed -i '/^## v[0-9]*\.[0-9]*\.[0-9]*/d' extracted_notes.txt
+
           echo "--- Extracted release notes for $VERSION ---"
           cat extracted_notes.txt
           echo "-------------------------------------------"
 
-          # Make them available as a step output
+          # 4) Convert the file contents into a step output variable
+          #    ::set-output is deprecated but still works in many runners. 
+          #    You might eventually switch to $GITHUB_OUTPUT if needed.
           echo "::set-output name=notes::$(cat extracted_notes.txt | sed 's/%/%25/g; s/\r/%0D/g; s/\n/%0A/g')"
 
-      # 2) Create the release, using the extracted notes as the body
+      - name: Debug final release body (optional)
+        run: |
+          echo "Below is the content that will appear in the release body:"
+          echo "${{ steps.extract_notes.outputs.notes }}"
+
       - name: Create GitHub Release
         uses: actions/create-release@v1.1.4
         with:
