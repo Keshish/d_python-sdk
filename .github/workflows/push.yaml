@@ -41,7 +41,7 @@ jobs:
           echo "-------------------------------------------"
 
           # 4) Convert the file contents into a step output variable
-          #    ::set-output is deprecated but still works in many runners. 
+          #    ::set-output is deprecated but still works in many runners.
           #    You might eventually switch to $GITHUB_OUTPUT if needed.
           echo "::set-output name=notes::$(cat extracted_notes.txt | sed 's/%/%25/g; s/\r/%0D/g; s/\n/%0A/g')"
 
