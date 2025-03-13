@@ -1,40 +1,47 @@
-name: Create Release from Changelog
-
+name: Build & Release
 on:
   push:
     tags:
       - 'v*.*.*'
-permissions:
-  contents: write
+
 jobs:
-  release:
+  build_and_release:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
         uses: actions/checkout@v3
 
-      - name: Extract Release Notes
+      - name: Build (example)
+        run: echo "Do your build or packaging here"
+
+      # 1) Parse the changelog to extract only the new version’s notes
+      - name: Extract release notes
+        id: extract_notes
         run: |
-          VERSION="${GITHUB_REF_NAME}"        # e.g. 'v0.1.1'
-          sed -n "/^$VERSION$/,/^v[0-9]*\.[0-9]*\.[0-9]*/p" CHANGELOG.md \
-            | sed '$d' \
+          VERSION="${GITHUB_REF_NAME}"  # e.g. "v0.1.1"
+          # Let's assume your version headings are formatted like "## v0.1.1"
+          # Adjust sed patterns to match your real headings:
+          sed -n "/^## $VERSION$/,/^## v[0-9]*\.[0-9]*\.[0-9]*/p" CHANGELOG.md \
             | sed '1d' \
-            > release_notes_extract.md
+            | sed '$d' \
+            > extracted_notes.txt
 
-          # Explanation of the sed pipeline:
-          # -  The first sed command prints everything from a line matching ^v0.1.1$
-          #    until the next line that matches a version pattern ^vX.Y.Z,
-          #    effectively grabbing just the text for v0.1.1.
-          # -  Then we remove the last line (which might be the next version header).
-          # -  Then we remove the first line (the heading itself).
-          # -  Adjust to your exact headings or version pattern as needed.
+          # Optionally cat it for debugging
+          echo "--- Extracted release notes for $VERSION ---"
+          cat extracted_notes.txt
+          echo "-------------------------------------------"
 
-      - name: Create Release
-        uses: ncipollo/release-action@v1
+          # Make them available as a step output
+          echo "::set-output name=notes::$(cat extracted_notes.txt | sed 's/%/%25/g; s/\r/%0D/g; s/\n/%0A/g')"
+
+      # 2) Create the release, using the extracted notes as the body
+      - name: Create GitHub Release
+        uses: actions/create-release@v1.1.4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
-          name: "Release ${{ github.ref_name }}"
-          bodyFile: "release_notes_extract.md"
+          tag_name: ${{ github.ref_name }}
+          release_name: "Release ${{ github.ref_name }}"
+          body: ${{ steps.extract_notes.outputs.notes }}
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(github.ref_name, 'rc') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
