@@ -1,54 +1,38 @@
-name: Build & Release
+name: Extract Release Notes Only
 
 on:
   push:
     tags:
-      - 'v*.*.*'  # For example, v1.0.0 or v0.9.2
+      - 'v*.*.*'  
 
 jobs:
-  build_and_release:
-    permissions:
-      contents: write  # Needed for creating releases
+  extract_notes_job:
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out
         uses: actions/checkout@v3
 
-      - name: Build (example)
-        run: echo "Do your build or packaging here"
-
       - name: Extract release notes
-        id: extract_notes
         run: |
           VERSION="${GITHUB_REF_NAME}"
-          # From '## v0.1.1' ignoring trailing spaces to next '## ' or EOF
-          sed -n "/^##[[:space:]]\+$VERSION[[:space:]]*$/,/^## /p" CHANGELOG.md > extracted_notes.txt \
-            || true
+          echo "Version is: $VERSION"
 
-          # If you want to skip the version line itself:
+          # Step A: Convert any Windows line endings to Unix (optional, but prevents mismatch)
+          sudo apt-get update
+          sudo apt-get install -y dos2unix
+          dos2unix CHANGELOG.md
+
+          # Step B: Print from the line matching "## v0.1.0" (for example)
+          #         until the next heading "## " or EOF.
+          #         If your headings use EXACT format "## v0.1.0" with NO trailing space, this should match.
+          sed -n "/^## $VERSION$/,/^## /p" CHANGELOG.md > extracted_notes.txt
+
+          # Step C: Remove the first line (the heading itself)
           sed -i '1d' extracted_notes.txt
 
-          # Remove any heading lines
+          # Step D: Remove any heading lines that might have been included (the next heading)
           sed -i '/^## /d' extracted_notes.txt
 
-          echo "--- Extracted release notes for $VERSION ---"
+          echo "=== Extracted release notes for $VERSION ==="
           cat extracted_notes.txt
-          echo "-------------------------------------------"
-          echo "::set-output name=notes::$(cat extracted_notes.txt | sed 's/%/%25/g; s/\r/%0D/g; s/\n/%0A/g')"
-
-      - name: Debug final release body (optional)
-        run: |
-          echo "Below is the content that will appear in the release body:"
-          echo "${{ steps.extract_notes.outputs.notes }}"
-
-      - name: Create GitHub Release
-        uses: actions/create-release@v1.1.4
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: "Release ${{ github.ref_name }}"
-          body: ${{ steps.extract_notes.outputs.notes }}
-          draft: false
-          prerelease: ${{ contains(github.ref_name, 'rc') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "==========================================="
