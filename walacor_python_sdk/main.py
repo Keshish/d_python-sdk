@@ -1,12 +1,4 @@
-from walacor_python_sdk.sdk_facade import SDKFacade
-from walacor_python_sdk.w_client import W_Client
+from walacor_python_sdk.walacor_service import WalacorService
 
-
-class Main:
-    def greeting(self, name: str) -> str:
-        return f"Hello {name}"
-
-
-client = W_Client("http://44.203.135.89/api", "Admin", "GreenDoor99")
-instance1 = SDKFacade(client)
-instance1.auth.login()
+walacor_service = WalacorService("http://44.203.135.89/api", "Admin", "GreenDoor99")
+walacor_service.auth.login()
